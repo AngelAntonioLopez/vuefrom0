@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+    <div id='app'>
+
+    </div>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js'></script>
+    <script>
+
+Vue.component('todo-add',{
+            template: `
+            <div>
+                <input v-model='title' type='text' placeholder='escriba una tarea'/>
+                <input v-model='description' type='text' placeholder='escriba una descripcion'/>
+                <button v-on:click='oncClick' >cargar</button>
+            </div>
+            `,
+
+            data: function () {
+                return{
+                    title: null,
+                    description: null,
+                }
+            },
+
+            methods: {
+                oncClick: function (){
+                    newTask = {titulo: this.title, descripcion: this.description, completo: false};
+                    console.log(newTask.titulo);
+
+                    this.$emit('new', newTask)
+                }
+
+            }
+        });
+
+        Vue.component('todo-item',{
+            props: ['todo'],
+            template: `
+                <li>
+                    <h1>{{todo.titulo}}</h1>
+                    <h2>{{todo.descripcion}}</h2>
+                </li>
+            `
+        })
+
+        Vue.component('todo-list',{
+            props: ['todos'],
+
+            template: `
+                <ul>
+                    <todo-item v-for="(todo, index) in todos" v-bind:key='index' v-bind:todo='todo'/>
+                </ul>
+            `
+
+            
+        })
+
+        const app = new Vue({
+            el: "#app",
+            data: {
+                todos: [
+                    {titulo: 'tarea 1', descripcion: 'descripcion1', completo: false},
+                    {titulo: 'tarea 2', descripcion: 'descripcion2', completo: false},
+                    {titulo: 'tarea 3', descripcion: 'descripcion3', completo: false},
+                    {titulo: 'tarea 4', descripcion: 'descripcion4', completo: false}
+                ]
+            },
+            template: `
+            <div>
+            <todo-add v-on:new='addNewTodo'/>
+            <todo-list v-bind:todos='todos'></todo-list>
+            </div>
+            `,
+            methods:{
+                addNewTodo: function (todo){
+                    this.todos.push(todo);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
